@@ -7,7 +7,7 @@ const authMiddleWare = async(req,res,next) =>{
     }
     try{
         const token_decode = jwt.verify(token,process.env.JWT_SECRET)
-        req.body.userId = token_decode
+        req.body.userId = token_decode.id
         next();
     }
     catch(error){
@@ -15,5 +15,4 @@ const authMiddleWare = async(req,res,next) =>{
         res.json({success:false,message:"Error"})
     }
 }
-
 export default authMiddleWare
