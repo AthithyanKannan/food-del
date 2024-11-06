@@ -28,14 +28,17 @@ const StoreContextProvider = (props) => {
             await axios.post(url+"/api/cart/remove",{itemId},{headers:{token}})
         }
     }
-    const getTotalCartAmount = () =>{
-        let totalAmount = 0
-        for(const item in cartItems){
-            let itemInfo = food_list.find((product)=>product._id === item)
-            totalAmount += itemInfo*cartItems[item]
+    const getTotalCartAmount = () => {
+        let totalAmount = 0;
+        for (const item in cartItems) {
+            let itemInfo = food_list.find((product) => product._id === item);
+            if (itemInfo) {
+                totalAmount += itemInfo.price * cartItems[item]; // Access the price field
+            }
         }
         return totalAmount;
-    }
+    };
+    
 
     const fetchFoodList = async() =>{
         const response = await axios.get(url+"/api/food/list")
