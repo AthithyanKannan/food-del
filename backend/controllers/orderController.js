@@ -16,7 +16,7 @@ const placeOrder = async(req,res)=>{
             address:req.body.address
         })
         await newOrder.save();
-        await userModel.findByIdAndDelete(req.body.userId,{cartData:{}})
+        await userModel.findByIdAndUpdate(req.body.userId,{cartData:{}})
 
         const line_items = req.body.items.map((item)=>({
             price_data:{
@@ -61,10 +61,10 @@ const verifyOrder = async(req,res) =>{
     const {orderId,success} = req.body;
     try{
         if(success == "true"){
-            await orderModel.findByIdAndDelete(orderId,{payment:true})
+            await orderModel.findByIdAndUpdate(orderId,{payment:true})
             res.json({success:true,message:"Paid"})
         }else{
-            await orderModel.findByIdAndDelete(orderId);
+            await orderModel.findByIdAndUpdate(orderId,{payment:false});
             res.json({success:false,message:"Not Paid"})
         }
     }
@@ -74,4 +74,28 @@ const verifyOrder = async(req,res) =>{
     } 
 }
 
-export {placeOrder,verifyOrder}
+//user orders for frontend
+const userOrders = async(req,res) =>{
+    try{
+        const orders = await orderModel.find({userId:req.body.userId});
+        res.json({success:true,data:orders})
+    }
+    catch(error){
+        console.log(error);
+        res.json({success:false,messgae:"Error"})
+    }
+}
+
+// Listing orders for admin panel
+const listOrders = async(req,res) =>{
+    try{
+        const orders = await orderModel.find({});
+        res.json({success:true,data:orders})
+    }catch(error){
+        console.log(error)
+        res.json({success:false,message:"Error"})
+    }
+}
+
+
+export {placeOrder,verifyOrder,userOrders,listOrders}
